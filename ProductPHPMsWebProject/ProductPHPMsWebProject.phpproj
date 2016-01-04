@@ -25,6 +25,7 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="db_facade.php" />
     <Compile Include="getlist.php" />
     <Compile Include="index.html" />
   </ItemGroup>
