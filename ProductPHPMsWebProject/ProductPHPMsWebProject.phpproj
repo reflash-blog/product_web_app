@@ -26,6 +26,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="db_facade.php" />
+    <Compile Include="create.php" />
     <Compile Include="getlist.php" />
     <Compile Include="index.html" />
   </ItemGroup>
@@ -36,6 +37,7 @@
   <ItemGroup>
     <Content Include="create.html" />
     <Content Include="js\app.js" />
+    <Content Include="js\createController.js" />
     <Content Include="js\listController.js" />
     <Content Include="js\sortable.js" />
   </ItemGroup>
