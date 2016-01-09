@@ -6,7 +6,7 @@
 
 # TODO change to trigger on sort_by_id boolean value
 # TODO change to work with cache 
-function getList($start, $amount, $sortedid){
+function getList($start, $amount, $sortOrder){
     global $servername, $username, $password, $dbname;
 
     $conn = mysqli_connect($servername, $username, $password, $dbname);
@@ -14,7 +14,7 @@ function getList($start, $amount, $sortedid){
         die("Connection failed: ". mysql_error());
     }
 
-    $sql = createQuery($start, $amount, $sortedid);
+    $sql = createQuery($start, $amount, $sortOrder);
     $result = mysqli_query($conn, $sql);
 
     $products = array();
@@ -26,13 +26,46 @@ function getList($start, $amount, $sortedid){
                 'name' => $row['Name'],
                 'description' => $row['Description'],
                 'price' => $row['Price'],
-                'image_url' => $row['Url']));
+                'url' => $row['Url']));
         }
     }
 
     mysqli_close($conn);
 
 	return json_encode($products);
+}
+
+function getById($id){
+    global $servername, $username, $password, $dbname;
+
+    $conn = mysqli_connect($servername, $username, $password, $dbname);
+    if (!$conn) {
+        die("Connection failed: ". mysql_error());
+    }
+
+    $sql = "SELECT * FROM Product WHERE Id=$id";
+    $result = mysqli_query($conn, $sql);
+
+    $products = array();
+    if(mysqli_num_rows($result) > 0)
+    {
+        while($row = mysqli_fetch_assoc($result)) {
+            array_push($products, array(
+                'id' => $row['Id'],
+                'name' => $row['Name'],
+                'description' => $row['Description'],
+                'price' => $row['Price'],
+                'url' => $row['Url']));
+        }
+    }
+    else
+    {
+        die("Id not found ");
+    }
+
+    mysqli_close($conn);
+
+	return json_encode($products[0]);
 }
 
 function insertProduct($name, $desc, $price, $url)

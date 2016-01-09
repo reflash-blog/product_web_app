@@ -9,19 +9,33 @@
     }
 }
 
-app.controller('createController', function ($scope, $http) {
+app.controller('deleteController', function ($scope, $http, $routeParams) {
     $scope.showModal = false;
     $scope.toggleModal = function () {
         $scope.showModal = !$scope.showModal;
     };
 
     $scope.product = new Array();
+    $scope.product.id = $routeParams.id;
 
-    $scope.submit = function() {
+    // Get the product by id
+    $http.get('edit.php', {params:{ 'id': $scope.product.id }}).
+        success(function (data, status, headers, config) {
+            // Correct the output
+            data.price = parseFloat(data.price);
+            $scope.product = data;
+        }).
+        error(function(data, status, headers, config) {
+            $scope.errorCode = status;
+            $scope.errorMessage = data.message;
+            $scope.toggleModal();
+        });
+
+    $scope.submit = function () {
         $http({
-                url: 'create.php',
+                url: 'delete.php',
                 method: "POST",
-                data: JSON.stringify({ 'name': $scope.product.name, 'description': $scope.product.description, 'price': $scope.product.price, 'url': $scope.product.url }),
+                data: JSON.stringify({ 'id': $scope.product.id}),
                 headers: { 'Content-Type': 'application/json' }
             }).
             success(function (data, status, headers, config) {
@@ -33,5 +47,9 @@ app.controller('createController', function ($scope, $http) {
                 $scope.toggleModal();
             });
     };
+
+    $scope.close = function() {
+        changeLocation($scope, '/');
+    }
 });
 

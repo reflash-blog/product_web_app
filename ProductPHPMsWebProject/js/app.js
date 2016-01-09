@@ -1,4 +1,29 @@
-﻿var app = angular.module('productDbApp', []);
+﻿var app = angular.module('productDbApp', ['ngRoute']);
+
+app.config(['$routeProvider',
+    function($routeProvider) {
+        $routeProvider.
+            when('/', {
+                templateUrl: 'views/list.html',
+                controller: 'listController'
+            }).
+            when('/create', {
+                templateUrl: 'views/create.html',
+                controller: 'createController'
+            }).
+            when('/edit/:id', {
+                templateUrl: 'views/edit.html',
+                controller: 'editController'
+            }).
+            when('/delete/:id', {
+                templateUrl: 'views/delete.html',
+                controller: 'deleteController'
+            }).
+            otherwise({
+                redirectTo: '/'
+            });
+    }
+]);
 
 app.directive('modal', function () {
     return {
