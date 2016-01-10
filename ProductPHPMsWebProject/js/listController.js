@@ -1,22 +1,13 @@
-﻿app.controller('listController', function ($scope, $http) {
-    $scope.showModal = false;
-    $scope.toggleModal = function () {
-        $scope.showModal = !$scope.showModal;
-    };
-
+﻿app.controller('listController', function($scope, $http, appService) {
     $scope.sortOrder = 'id';
 
-
-    $scope.update = function () {
-        var url = 'list.php';
-        $http.get(url).
+    $scope.update = function() {
+        appService.getProductList().
             success(function(data, status, headers, config) {
                 $scope.products = data;
             }).
-            error(function (data, status, headers, config) {
-                $scope.errorCode = status;
-                $scope.errorMessage = data.message;
-                $scope.toggleModal();
+            error(function(data, status, headers, config) {
+                appService.showError($scope, status, data.message);
             });
     }
 

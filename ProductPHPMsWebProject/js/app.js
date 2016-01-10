@@ -25,6 +25,55 @@ app.config(['$routeProvider',
     }
 ]);
 
+app.service('appService', function ($http) {
+    this.getProduct = function (id) {
+        return $http.get('get.php', { params: { 'id': id } });
+    }
+
+    this.getProductList = function () {
+        return $http.get('list.php');
+    }
+
+    this.submit = function(url, product) {
+        return $http({
+            url: url,
+            method: "POST",
+            data: JSON.stringify({
+                'id': product.id,
+                'name': product.name,
+                'description': product.description,
+                'price': product.price,
+                'url': product.url
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+
+    this.showError = function($scope, status, message) {
+        $scope.toggleModal = function() {
+            $scope.showModal = !$scope.showModal;
+        };
+
+        $scope.errorCode = status;
+        $scope.errorMessage = message;
+        $scope.showModal = true;
+    }
+
+    this.changeLocation = function ($scope, url) {
+        return function() {
+            $scope = $scope || window.angular.element(document).scope();
+            if ($scope.$$phase) {
+                window.location = url;
+            } else {
+                window.$location.path(url);
+                $scope.$apply();
+            }
+        }
+    }
+
+});
+
+
 app.directive('modal', function () {
     return {
         template: '<div class="modal fade">' +
