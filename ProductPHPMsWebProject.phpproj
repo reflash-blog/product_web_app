@@ -35,10 +35,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="js\" />
+    <Folder Include="bin\" />
     <Folder Include="views\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\php_memcache.dll" />
+    <Content Include="bin\php_memcache.pdb" />
     <Content Include="js\deleteController.js" />
     <Content Include="views\delete.html" />
     <Content Include="views\edit.html" />
