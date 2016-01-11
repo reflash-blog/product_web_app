@@ -4,10 +4,16 @@
     $password = "9f54990f";
     $dbname = "ProductMySQL";
 
-# TODO change to trigger on sort_by_id boolean value
-# TODO change to work with cache 
+    $memcacheServerName = "pub-memcache-12335.us-east-1-3.4.ec2.garantiadata.com";
+    $memcachePort = 12335;
+
 function getList($start, $amount, $sortOrder){
     global $servername, $username, $password, $dbname;
+
+    $valueFromCache = getFromCache("K$start.$amount.$sortOrder");
+
+    if($valueFromCache)
+        return $valueFromCache;
 
     $conn = mysqli_connect($servername, $username, $password, $dbname);
     if (!$conn) {
@@ -32,11 +38,19 @@ function getList($start, $amount, $sortOrder){
 
     mysqli_close($conn);
 
-	return json_encode($products);
+    $jsonResult = json_encode($products);
+    addToCache("K$start.$amount.$sortOrder", $jsonResult);
+
+	return $jsonResult;
 }
 
 function getById($id){
     global $servername, $username, $password, $dbname;
+
+    $valueFromCache = getFromCache("D.$id");
+
+    if($valueFromCache)
+        return $valueFromCache;
 
     $conn = mysqli_connect($servername, $username, $password, $dbname);
     if (!$conn) {
@@ -65,7 +79,10 @@ function getById($id){
 
     mysqli_close($conn);
 
-	return json_encode($products[0]);
+	$jsonResult = json_encode($products[0]);
+    addToCache("D.$id", $jsonResult);
+
+	return $jsonResult;
 }
 
 function insertProduct($name, $desc, $price, $url)
@@ -81,6 +98,8 @@ function insertProduct($name, $desc, $price, $url)
     $result = mysqli_query($conn, $sql);
     
     mysqli_close($conn);
+
+    clearCache();
 
     return $result;
 }
@@ -99,6 +118,8 @@ function updateProduct($id, $name, $desc, $price, $url)
 
     mysqli_close($conn);
 
+    clearCache();
+
     return $result;
 }
 
@@ -116,19 +137,41 @@ function deleteProduct($id)
 
     mysqli_close($conn);
 
+    clearCache();
+
     return $result;
 }
 
 function createQuery($start, $amount, $sortedid)
 {
     $end = $start + $amount;
-
-    if($sortedid){
-        return "SELECT * FROM Product ORDER BY Id ASC LIMIT $start,$end";
-    }
-    return "SELECT * FROM Product ORDER BY Price ASC LIMIT $start,$end";
-
+    return "SELECT * FROM Product ORDER BY $sortedid ASC LIMIT $start,$end";
 }
+
+function getFromCache($key)
+{
+    global $memcacheServerName, $memcachePort;
+
+    $memcache_obj = memcache_connect($memcacheServerName, $memcachePort);
+    return memcache_get($memcache_obj, $key);
+}
+
+function addToCache($key, $item)
+{
+    global $memcacheServerName, $memcachePort;
+
+    $memcache_obj = memcache_connect($memcacheServerName, $memcachePort);
+    memcache_add($memcache_obj, $key, $item, false, 60);
+}
+
+function clearCache()
+{
+    global $memcacheServerName, $memcachePort;
+
+    $memcache_obj = memcache_connect($memcacheServerName, $memcachePort);
+    memcache_flush($memcache_obj);
+}
+
 
 function failWithError($message, $httpError)
 {
