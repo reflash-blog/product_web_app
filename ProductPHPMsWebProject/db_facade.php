@@ -85,14 +85,38 @@ function insertProduct($name, $desc, $price, $url)
     return $result;
 }
 
-function updateProduct($updatedProduct)
+function updateProduct($id, $name, $desc, $price, $url)
 {
+    global $servername, $username, $password, $dbname;
 
+    $conn = mysqli_connect($servername, $username, $password, $dbname);
+    if (!$conn) {
+        die("Connection failed: " . mysql_error());
+    }
+
+    $sql = "UPDATE Product SET Name='$name', Description='$desc', Price=$price, Url='$url' WHERE Id=$id";
+    $result = mysqli_query($conn, $sql);
+
+    mysqli_close($conn);
+
+    return $result;
 }
 
-function deleteProduct($updatedProduct)
+function deleteProduct($id)
 {
+    global $servername, $username, $password, $dbname;
 
+    $conn = mysqli_connect($servername, $username, $password, $dbname);
+    if (!$conn) {
+        die("Connection failed: " . mysql_error());
+    }
+
+    $sql = "DELETE FROM Product WHERE Id=$id";
+    $result = mysqli_query($conn, $sql);
+
+    mysqli_close($conn);
+
+    return $result;
 }
 
 function createQuery($start, $amount, $sortedid)

@@ -13,7 +13,7 @@ include "db_facade.php";
         {
             $updateResult = updateProduct($request['id'], $request['name'], $request['description'], $request['price'], $request['url']);
 
-            if($insertResult == false)
+            if($updateResult == false)
                 failWithError('Data update failed', '500 Internal Server Error');
         }
         else

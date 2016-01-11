@@ -11,14 +11,18 @@
             appService.showError($scope, status, data.message);
         });
 
-    $scope.submit = appService.submit('delete.php', $scope.product).
-        success(function (data, status, headers, config) {
-            appService.changeLocation($scope, '/');
-        }).
-        error(function (data, status, headers, config) {
-            appService.showError($scope, status, data.message);
-        });
+    $scope.submit = function() {
+        appService.submit('delete.php', $scope.product).
+            success(function(data, status, headers, config) {
+                appService.changeLocation($scope, '/');
+            }).
+            error(function(data, status, headers, config) {
+                appService.showError($scope, status, data.message);
+            });
+    }
 
-    $scope.close = appService.changeLocation($scope, '/');
+    $scope.close = function () {
+        appService.changeLocation($scope, '/');
+    }
 });
 

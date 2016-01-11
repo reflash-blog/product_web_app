@@ -59,15 +59,13 @@ app.service('appService', function ($http) {
         $scope.showModal = true;
     }
 
-    this.changeLocation = function ($scope, url) {
-        return function() {
-            $scope = $scope || window.angular.element(document).scope();
-            if ($scope.$$phase) {
-                window.location = url;
-            } else {
-                window.$location.path(url);
-                $scope.$apply();
-            }
+    this.changeLocation = function($scope, url) {
+        $scope = $scope || window.angular.element(document).scope();
+        if ($scope.$$phase) {
+            window.location = url;
+        } else {
+            window.$location.path(url);
+            $scope.$apply();
         }
     }
 

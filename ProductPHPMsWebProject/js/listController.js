@@ -11,5 +11,5 @@
             });
     }
 
-    $scope.update();
+    $scope.$on('$routeChangeSuccess', $scope.update);
 });
