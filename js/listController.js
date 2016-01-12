@@ -25,6 +25,8 @@
         $scope.products = new Array();
         $scope.busy = false;
         $scope.loadingEnded = false;
+
+        $scope.nextPage();
     }
 
     $scope.$on('$routeChangeSuccess', $scope.refresh);
