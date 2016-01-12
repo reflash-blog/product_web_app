@@ -1,4 +1,4 @@
-﻿var app = angular.module('productDbApp', ['ngRoute']);
+﻿var app = angular.module('productDbApp', ['ngRoute', 'infinite-scroll']);
 
 app.config(['$routeProvider',
     function($routeProvider) {
@@ -30,8 +30,8 @@ app.service('appService', function ($http) {
         return $http.get('get.php', { params: { 'id': id } });
     }
 
-    this.getProductList = function () {
-        return $http.get('list.php');
+    this.getProductList = function (start, amount, sortValue, order) {
+        return $http.get('list.php', { params: { 'start': start, 'amount': amount, 'sortValue': sortValue, 'order': order } });
     }
 
     this.submit = function(url, product) {
@@ -70,7 +70,6 @@ app.service('appService', function ($http) {
     }
 
 });
-
 
 app.directive('modal', function () {
     return {

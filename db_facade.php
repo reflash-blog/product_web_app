@@ -7,10 +7,10 @@
     $memcacheServerName = "pub-memcache-12335.us-east-1-3.4.ec2.garantiadata.com";
     $memcachePort = 12335;
 
-function getList($start, $amount, $sortOrder){
+function getList($start, $amount, $sortValue, $sortOrder){
     global $servername, $username, $password, $dbname;
 
-    $valueFromCache = getFromCache("K$start.$amount.$sortOrder");
+    $valueFromCache = getFromCache("K$start.$amount.$sortValue.$sortOrder");
 
     if($valueFromCache)
         return $valueFromCache;
@@ -20,7 +20,7 @@ function getList($start, $amount, $sortOrder){
         die("Connection failed: ". mysql_error());
     }
 
-    $sql = createQuery($start, $amount, $sortOrder);
+    $sql = createQuery($start, $amount, $sortValue, $sortOrder);
     $result = mysqli_query($conn, $sql);
 
     $products = array();
@@ -39,7 +39,7 @@ function getList($start, $amount, $sortOrder){
     mysqli_close($conn);
 
     $jsonResult = json_encode($products);
-    addToCache("K$start.$amount.$sortOrder", $jsonResult);
+    addToCache("K$start.$amount.$sortValue.$sortOrder", $jsonResult);
 
 	return $jsonResult;
 }
@@ -47,7 +47,7 @@ function getList($start, $amount, $sortOrder){
 function getById($id){
     global $servername, $username, $password, $dbname;
 
-    $valueFromCache = getFromCache("D.$id");
+    $valueFromCache = getFromCache("D$id");
 
     if($valueFromCache)
         return $valueFromCache;
@@ -80,7 +80,7 @@ function getById($id){
     mysqli_close($conn);
 
 	$jsonResult = json_encode($products[0]);
-    addToCache("D.$id", $jsonResult);
+    addToCache("D$id", $jsonResult);
 
 	return $jsonResult;
 }
@@ -96,7 +96,7 @@ function insertProduct($name, $desc, $price, $url)
 
     $sql = "INSERT INTO Product (Name, Description, Price, Url) VALUES ('$name', '$desc', $price, '$url')";
     $result = mysqli_query($conn, $sql);
-    
+
     mysqli_close($conn);
 
     clearCache();
@@ -142,10 +142,9 @@ function deleteProduct($id)
     return $result;
 }
 
-function createQuery($start, $amount, $sortedid)
+function createQuery($start, $amount, $sortValue, $sortOrder)
 {
-    $end = $start + $amount;
-    return "SELECT * FROM Product ORDER BY $sortedid ASC LIMIT $start,$end";
+    return "SELECT * FROM Product ORDER BY $sortValue $sortOrder LIMIT $start,$amount";
 }
 
 function getFromCache($key)
