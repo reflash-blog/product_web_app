@@ -1,4 +1,7 @@
 ﻿app.controller('listController', function ($scope, $http, appService) {
+    $scope.sortValue = 'id';
+    $scope.sortOrder = 'ASC';
+
     $scope.nextPage = function () {
         if ($scope.loadingEnded) return;
         if ($scope.busy) return;
@@ -19,8 +22,6 @@
     $scope.refresh = function () {
         $scope.start = 0;
         $scope.amount = 20;
-        $scope.sortValue = 'id';
-        $scope.sortOrder = 'ASC';
         $scope.products = new Array();
         $scope.busy = false;
         $scope.loadingEnded = false;
